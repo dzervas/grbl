@@ -106,6 +106,8 @@ void spindle_stop()
         SPINDLE_ENABLE_PORT &= ~(1<<SPINDLE_ENABLE_BIT); // Set pin to low
       #endif
     #endif
+  #elif SERVO_SPINDLE
+    SPINDLE_OCR_REGISTER = SERVO_SPINDLE_OFF;
   #else
     #ifdef INVERT_SPINDLE_ENABLE_PIN
       SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);  // Set pin to high
@@ -239,7 +241,8 @@ void spindle_stop()
   
   } else {
     
-    #if !defined(USE_SPINDLE_DIR_AS_ENABLE_PIN) && !defined(ENABLE_DUAL_AXIS)
+    #if !defined(USE_SPINDLE_DIR_AS_ENABLE_PIN) && \
+      !defined(ENABLE_DUAL_AXIS) && !defined(SERVO_SPINDLE)
       if (state == SPINDLE_ENABLE_CW) {
         SPINDLE_DIRECTION_PORT &= ~(1<<SPINDLE_DIRECTION_BIT);
       } else {
@@ -254,8 +257,9 @@ void spindle_stop()
       }
       spindle_set_speed(spindle_compute_pwm_value(rpm));
     #endif
-    #if (defined(USE_SPINDLE_DIR_AS_ENABLE_PIN) && \
-        !defined(SPINDLE_ENABLE_OFF_WITH_ZERO_SPEED)) || !defined(VARIABLE_SPINDLE)
+    #if ((defined(USE_SPINDLE_DIR_AS_ENABLE_PIN) && \
+        !defined(SPINDLE_ENABLE_OFF_WITH_ZERO_SPEED)) || \
+      !defined(VARIABLE_SPINDLE)) && ! defined(SERVO_SPINDLE)
       // NOTE: Without variable spindle, the enable bit should just turn on or off, regardless
       // if the spindle speed value is zero, as its ignored anyhow.
       #ifdef INVERT_SPINDLE_ENABLE_PIN
@@ -264,7 +268,10 @@ void spindle_stop()
         SPINDLE_ENABLE_PORT |= (1<<SPINDLE_ENABLE_BIT);
       #endif    
     #endif
-  
+
+    #ifdef SERVO_SPINDLE
+      SPINDLE_OCR_REGISTER = SERVO_SPINDLE_ON;
+    #endif
   }
   
   sys.report_ovr_counter = 0; // Set to report change immediately
