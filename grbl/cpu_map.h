@@ -132,7 +132,11 @@
     #ifndef SPINDLE_PWM_MIN_VALUE
       #define SPINDLE_PWM_MIN_VALUE   1   // Must be greater than zero.
     #endif
-    #define SPINDLE_PWM_OFF_VALUE     0
+    #ifdef SERVO_SPINDLE
+      #define SPINDLE_PWM_OFF_VALUE     SERVO_SPINDLE_OFF
+    #else
+      #define SPINDLE_PWM_OFF_VALUE     0
+    #endif
     #define SPINDLE_PWM_RANGE         (SPINDLE_PWM_MAX_VALUE-SPINDLE_PWM_MIN_VALUE)
     #define SPINDLE_TCCRA_REGISTER    TCCR2A
     #define SPINDLE_TCCRB_REGISTER    TCCR2B
@@ -142,7 +146,7 @@
     // Prescaled, 8-bit Fast PWM mode.
     #define SPINDLE_TCCRA_INIT_MASK   ((1<<WGM20) | (1<<WGM21))  // Configures fast PWM mode.
     #ifdef SERVO_SPINDLE
-      #define SPINDLE_TCCRB_INIT_MASK ((1<<CS22) | (1<<CS21) | (1<<CS20)) // 1/1024 prescaler -> 15625Hz (Servos)
+      #define SPINDLE_TCCRB_INIT_MASK      ((1<<CS22) | (1<<CS21) | (1<<CS20)) // 1/1024 prescaler 16ms period - as close to 20 as possible
     #else
       // #define SPINDLE_TCCRB_INIT_MASK   (1<<CS20)               // Disable prescaler -> 62.5kHz
       // #define SPINDLE_TCCRB_INIT_MASK   (1<<CS21)               // 1/8 prescaler -> 7.8kHz (Used in v0.9)

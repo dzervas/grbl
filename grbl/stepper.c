@@ -384,7 +384,7 @@ ISR(TIMER1_COMPA_vect)
         st.steps[Z_AXIS] = st.exec_block->steps[Z_AXIS] >> st.exec_segment->amass_level;
       #endif
 
-      #ifdef VARIABLE_SPINDLE
+      #if defined(VARIABLE_SPINDLE) && !defined(SERVO_SPINDLE)
         // Set real-time spindle output as segment is loaded, just prior to the first step.
         spindle_set_speed(st.exec_segment->spindle_pwm);
       #endif
@@ -392,7 +392,7 @@ ISR(TIMER1_COMPA_vect)
     } else {
       // Segment buffer empty. Shutdown.
       st_go_idle();
-      #ifdef VARIABLE_SPINDLE
+      #if defined(VARIABLE_SPINDLE) && !defined(SERVO_SPINDLE)
         // Ensure pwm is set properly upon completion of rate-controlled motion.
         if (st.exec_block->is_pwm_rate_adjusted) { spindle_set_speed(SPINDLE_PWM_OFF_VALUE); }
       #endif
