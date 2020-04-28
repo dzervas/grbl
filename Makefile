@@ -41,7 +41,7 @@ FUSES      = -U hfuse:w:0xd2:m -U lfuse:w:0xff:m
 
 # Tune the lines below only if you know what you are doing:
 
-AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE) -B 10 -F
+AVRDUDE = avrdude $(PROGRAMMER) -p $(DEVICE) -B 1 -F
 
 # Compile flags for avr-gcc v4.8.1. Does not produce -flto warnings.
 # COMPILE = avr-gcc -Wall -Os -DF_CPU=$(CLOCK) -mmcu=$(DEVICE) -I. -ffunction-sections
